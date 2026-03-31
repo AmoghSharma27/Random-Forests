@@ -13,14 +13,13 @@ def predict_using_trained_forest(trained_forest, test_set):
     pass
 
 
-def make_training_set(df):
-    # TODO: Make training set
-    pass
-
-
 def run_random_forest(df):
     # TODO: Implement random forest algorithm
-    training_set, test_set = make_training_set(df)
+    size = df.shape[0]
+    test_size = int(size / 5)
+
+    test_set = df.iloc[:test_size, :]
+    training_set = df.iloc[test_size:, :]
 
     params = {
         "n_estimators": 0,
@@ -33,10 +32,11 @@ def run_random_forest(df):
 
     trained_forest = train_random_forest(training_set, params)
     result = predict_using_trained_forest(trained_forest, test_set)
+
     return result
 
 
-def format_properly(result):
+def format_properly_and_print(result):
     # TODO: Print output properly based on result
     pass
 
@@ -45,8 +45,7 @@ def main():
     df = pd.read_csv("./database/All_Pokemon.csv")
 
     result = run_random_forest(df)
-
-    print(format_properly(result))
+    format_properly_and_print(result)
 
 
 if __name__ == '__main__':
