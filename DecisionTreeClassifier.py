@@ -1,18 +1,18 @@
-import numpy as np
 from BinaryTree import BinaryTree
+import numpy as np
+import pandas as pd
+
 
 class DecisionTreeClassifier:
-    def __init__(self, data, threshold=0.0, target="Type 1"):
+    def __init__(self, data, threshold=0.0, target="Type 1", features=None):
+        if features is None:
+            features = ['HP', 'Att', 'Def', 'Spa', 'Spd', 'Spe']
         self.threshold = threshold
         self.target = target
+        self.features = features
+        
+        data = data[self.features + [self.target]]
 
-        numeric_cols = []
-        for col in data.columns:
-            if data[col].dtype != 'object':
-                numeric_cols.append(col)
-        data = data[numeric_cols + [self.target]]
-
-        self.features = self.add_features(data)
         self.root = self.build_tree(data)
 
     def add_features(self, data):
