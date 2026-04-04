@@ -1,4 +1,4 @@
-import random
+import numpy as np
 from BinaryTree import BinaryTree
 
 class DecisionTreeClassifier:
@@ -38,7 +38,7 @@ class DecisionTreeClassifier:
         return 1 - impurity
 
     def find_best_split(self, data, features, m_try):
-        feature_subset = random.sample(features, m_try)
+        feature_subset = list(np.random.choice(features, m_try, replace=False))
 
         best_feature = None
         best_threshold = None

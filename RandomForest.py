@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import DecisionTreeClassifier
+from DecisionTreeClassifier import DecisionTreeClassifier
 
 class RandomForests:
     def __init__(self, train_data, num_trees=10):
