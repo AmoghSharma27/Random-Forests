@@ -1,52 +1,50 @@
 import numpy as np
 import pandas as pd
-import matplotlib as mtl
+import DecisionTreeClassifier
 
+class RandomForests:
+    def __init__(self, train_data, num_trees=10):
+        self.num_trees = num_trees
+        self.forest = self.train_trees(train_data)
 
-def train_random_forest(training_set, params):
-    # TODO: train the random forest
-    pass
+    # Make bootstrap samples of the training data
+    def bootstrap(self, train_data):
+        n = len(train_data)
+        indices = np.random.choice(n, size=n, replace=True)
+        return train_data.iloc[indices]
 
+    # Train the number of trees as specified on the bootstrap samples and append them to a list
+    def train_trees(self, train_data):
+        forest = []
+        for i in range(self.num_trees):
+            # Create a decision tree and train it on th bootstrapped training data
+            sample = self.bootstrap(train_data)
+            curr_tree = DecisionTreeClassifier(sample)
+            forest.append(curr_tree)
 
-def predict_using_trained_forest(trained_forest, test_set):
-    # TODO: Prediction using the trained forest
-    pass
+        return forest
 
+    def predict(self, data_to_predict_with):
+        # Variable to store the majority vote prediction
+        majority_pred = None
+        majority_votes = 0
 
-def run_random_forest(df):
-    # TODO: Implement random forest algorithm
-    size = df.shape[0]
-    test_size = int(size / 5)
+        # Dictionary of predictions
+        predictions = {}
 
-    test_set = df.iloc[:test_size, :]
-    training_set = df.iloc[test_size:, :]
+        # Keep track of each prediction in a dictionary with the amount of times a tree makes that prediction as value.
+        for tree in self.forest:
+            prediction = tree.predict_one(tree.root, data_to_predict_with)
+            if prediction not in predictions.keys():
+                predictions[prediction] = 1
 
-    params = {
-        "n_estimators": 0,
-        "max_depth": 0,
-        "max_features": 0,
-        "min_samples_leaf": 0,
-        "bootstrap": False,
-        "criterion": "Null",
-    }
+            else:
+                predictions[prediction] += 1
 
-    trained_forest = train_random_forest(training_set, params)
-    result = predict_using_trained_forest(trained_forest, test_set)
+        # Go through all the predictions and return the most voted one
+        for prediction, votes in predictions.items():
+            if votes > majority_votes:
+                majority_votes = votes
+                majority_pred = prediction
 
-    return result
-
-
-def format_properly_and_print(result):
-    # TODO: Print output properly based on result
-    pass
-
-
-def main():
-    df = pd.read_csv("./database/All_Pokemon.csv")
-
-    result = run_random_forest(df)
-    format_properly_and_print(result)
-
-
-if __name__ == '__main__':
-    main()
+        return majority_pred
