@@ -3,6 +3,7 @@ import pandas as pd
 import math
 import time
 
+
 def import_csv(file_name="./database/All_Pokemon.csv"):
     return pd.read_csv(file_name)
 
@@ -16,7 +17,7 @@ def main():
     train_data = data.head(math.ceil(num_rows * 0.7))
     test_data = data.tail(math.floor(num_rows * 0.3))
 
-    random_forests = RandomForests(train_data, 100)
+    random_forests = RandomForests(train_data, 50)
 
     # Calculate how correct
     correct = 0
@@ -44,7 +45,8 @@ def main():
     avg_row_time = sum(row_times) / len(row_times)
     print(f"Avg Prediction Time per Row:\t{avg_row_time:.6f} seconds")
     print("Amount:\t", amount)
-    print(f"Accuracy:\t{(correct/amount) * 100.00}%")
+    print(f"Accuracy:\t{(correct / amount) * 100.00}%")
+
 
 if __name__ == "__main__":
     main()

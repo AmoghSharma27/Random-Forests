@@ -10,7 +10,7 @@ class DecisionTreeClassifier:
         self.threshold = threshold
         self.target = target
         self.features = features
-        
+
         data = data[self.features + [self.target]]
 
         self.root = self.build_tree(data)
