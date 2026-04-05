@@ -1,12 +1,13 @@
 from BinaryTree import BinaryTree
 import numpy as np
-import pandas as pd
 
 
 class DecisionTreeClassifier:
     def __init__(self, data, threshold=0.0, target="Type 1", features=None):
         if features is None:
-            features = ['HP', 'Att', 'Def', 'Spa', 'Spd', 'Spe']
+            features = data.select_dtypes(include="number").columns.tolist()
+            if target in features:
+                features.remove(target)
         self.threshold = threshold
         self.target = target
         self.features = features
@@ -45,9 +46,10 @@ class DecisionTreeClassifier:
         best_score = float('inf')
 
         for feature in feature_subset:
-            unique_values = data[feature].unique()
+            unique_values = sorted(data[feature].unique())
+            thresholds = [(unique_values[i] + unique_values[i + 1]) / 2 for i in range(len(unique_values) - 1)]
 
-            for threshold in unique_values:
+            for threshold in thresholds:
                 left = data[data[feature] <= threshold]
                 right = data[data[feature] > threshold]
 
