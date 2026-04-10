@@ -4,6 +4,7 @@ import numpy as np
 
 class DecisionTreeClassifier:
     def __init__(self, data, threshold=0.0, target="Type 1", features=None):
+
         if features is None:
             features = data.select_dtypes(include="number").columns.tolist()
             if target in features:
@@ -12,8 +13,10 @@ class DecisionTreeClassifier:
         self.target = target
         self.features = features
 
+
         data = data[self.features + [self.target]]
 
+        print("Building tree!")
         self.root = self.build_tree(data)
 
     def add_features(self, data):
@@ -24,7 +27,9 @@ class DecisionTreeClassifier:
                 features.append(column)
         return features
 
+    """
     def gini_impurity(self, data):
+    
         # get all the possible values at the label
         labels = data[self.target]
 
@@ -37,7 +42,7 @@ class DecisionTreeClassifier:
             impurity += p * p
 
         return 1 - impurity
-
+    
     def find_best_split(self, data, features, m_try):
         feature_subset = list(np.random.choice(features, m_try, replace=False))
 
@@ -70,6 +75,66 @@ class DecisionTreeClassifier:
                     best_threshold = threshold
 
         return best_feature, best_threshold
+    """
+
+    def gini_impurity(self, labels):
+        # Get counts for each unique label in labels
+        labels = np.asarray(labels, dtype=str)
+        unique_labels, counts = np.unique(labels, return_counts=True)
+
+        # Calculate probability of each label (we don't care about specific label, just the probability of each label)
+        probs = counts / len(labels)
+        # Gini impurity formula = 1 - ∑i->n (p_i^2)
+        return 1 - np.sum(probs ** 2)
+
+    def find_best_split(self, data, features, m_try):
+        sub_features = np.random.choice(features, m_try, replace=False)
+
+        best_feature = None
+        best_threshold = None
+        best_score = float('inf')
+
+        # For each feature in selected subset of all features
+        for feature in sub_features:
+            sorted_data = data.sort_values(feature)
+            values = sorted_data[feature].values
+            labels = sorted_data[self.target].values
+
+            unique_values = np.unique(values)
+
+            # Only 1 possible label, so just skip
+            if len(unique_values) <= 1:
+                continue
+
+            for i in range(len(unique_values) - 1):
+                # Take threshold as the midpoint between 2 successive values in the unique values in the feature
+                threshold = (unique_values[i] + unique_values[i + 1]) / 2
+
+                left_labels = labels[values <= threshold]
+                right_labels = labels[values > threshold]
+
+                if len(left_labels) == 0 or len(right_labels) == 0:
+                    # continue if either side has no values since it is not a threshold at that point
+                    continue
+
+                # n1/n:
+                left_weight = len(left_labels) / len(data)
+                # n2/n:
+                right_weight = len(right_labels) / len(data)
+
+                # Gini_A(D) = ((n1/n)*Gini(D1) + (n2/n)*Gini(D2))
+                left_score = (left_weight) * self.gini_impurity(left_labels)
+                right_score = (right_weight) * self.gini_impurity(right_labels)
+
+                Gini_score =  left_score + right_score
+
+                # We are trying to minimise the Gini impurity score
+                if Gini_score < best_score:
+                    best_score = Gini_score
+                    best_feature = feature
+                    best_threshold = threshold
+
+        return best_feature, best_threshold
 
     def build_tree(self, data):
         tree = BinaryTree()
@@ -85,7 +150,7 @@ class DecisionTreeClassifier:
             return tree
 
         # Gini stop condition
-        if self.gini_impurity(data) <= self.threshold:
+        if self.gini_impurity(data[self.target]) <= self.threshold:
             tree.set_data(data[self.target].mode()[0])
             return tree
 
