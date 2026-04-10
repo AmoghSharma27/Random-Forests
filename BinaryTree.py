@@ -88,11 +88,6 @@ class BinaryTree:
             retRight.set_parent(None)
         return retRight
 
-    def clear(self):
-        self.left = self.right = self.parent = None
-        self.data = None
-        self.threshold = None
-
     def root(self):
         if self.get_parent() is None:
             return self
@@ -101,29 +96,3 @@ class BinaryTree:
         while node.get_parent() is not None:
             node = node.get_parent()
         return node
-
-    def depth(self):
-        left_depth = right_depth = 0
-        if self.get_left():
-            left_depth = self.left.depth()
-        if self.get_right():
-            right_depth = self.right.depth()
-
-        return 1 + max(left_depth, right_depth)
-
-    def nodes(self):
-        left_nodes = right_nodes = 0
-
-        if self.get_left():
-            left_nodes = self.get_left().nodes()
-        if self.get_right():
-            right_nodes = self.get_right().nodes()
-
-        return 1 + left_nodes + right_nodes
-
-    def pretty_print(self):
-        if self.get_left():
-            self.get_left().pretty_print()
-        print(str(self.get_data()) + "\t")
-        if self.get_right():
-            self.get_right().pretty_print()

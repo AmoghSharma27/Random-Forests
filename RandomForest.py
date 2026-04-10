@@ -3,9 +3,17 @@ import numpy as np
 
 
 class RandomForests:
-    def __init__(self, train_data, num_trees=10):
+    def __init__(self, train_data, num_trees=10, target="Type 1", forest=None):
         self.num_trees = num_trees
-        self.forest = self.train_trees(train_data)
+        self.target = target
+        self.train_data = train_data
+        if forest is None:
+            self.forest = self.train_trees(train_data)
+        else:
+            self.forest = forest
+
+    def get_forest(self):
+        return (self.forest, self.train_data, self.num_trees, self.target)
 
     # Make bootstrap samples of the training data
     def bootstrap(self, train_data):
@@ -16,10 +24,11 @@ class RandomForests:
     # Train the number of trees as specified on the bootstrap samples and append them to a list
     def train_trees(self, train_data):
         forest = []
+        print(f"Attempting to train trees with {self.num_trees} trees")
         for i in range(self.num_trees):
             # Create a decision tree and train it on th bootstrapped training data
             sample = self.bootstrap(train_data)
-            curr_tree = DecisionTreeClassifier(sample)
+            curr_tree = DecisionTreeClassifier(sample, self.target)
             forest.append(curr_tree)
 
         return forest
