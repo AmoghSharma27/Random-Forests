@@ -13,7 +13,6 @@ class DecisionTreeClassifier:
         self.target = target
         self.features = features
 
-
         data = data[self.features + [self.target]]
 
         print("Building tree!")
@@ -26,56 +25,6 @@ class DecisionTreeClassifier:
             if column != self.target:
                 features.append(column)
         return features
-
-    """
-    def gini_impurity(self, data):
-    
-        # get all the possible values at the label
-        labels = data[self.target]
-
-        # Get the probability of each value (normalize = True)
-        probs = labels.value_counts(normalize=True)
-
-        # Gini impurity formula = 1 - ∑i->n (p_i^2)
-        impurity = 0
-        for p in probs:
-            impurity += p * p
-
-        return 1 - impurity
-    
-    def find_best_split(self, data, features, m_try):
-        feature_subset = list(np.random.choice(features, m_try, replace=False))
-
-        best_feature = None
-        best_threshold = None
-        best_score = float('inf')
-
-        for feature in feature_subset:
-            unique_values = sorted(data[feature].unique())
-            thresholds = [(unique_values[i] + unique_values[i + 1]) / 2 for i in range(len(unique_values) - 1)]
-
-            for threshold in thresholds:
-                left = data[data[feature] <= threshold]
-                right = data[data[feature] > threshold]
-
-                if len(left) == 0 or len(right) == 0:
-                    continue
-
-                left_weight = (len(left) / len(data))
-                right_weight = (len(right) / len(data))
-
-                left_weight *= self.gini_impurity(left)
-                right_weight *= self.gini_impurity(right)
-
-                score = left_weight + right_weight
-
-                if score < best_score:
-                    best_score = score
-                    best_feature = feature
-                    best_threshold = threshold
-
-        return best_feature, best_threshold
-    """
 
     def gini_impurity(self, labels):
         # Get counts for each unique label in labels
@@ -96,8 +45,9 @@ class DecisionTreeClassifier:
 
         # For each feature in selected subset of all features
         for feature in sub_features:
-            # faster sorting because it uses numpy instead of pandas
+            # faster sorting because it uses numpy instead of pandas due to overhead in pandas
             # But essentially the same as unique_values = sorted(data[feature].unique())
+            # https://penandpants.com/2014/09/05/performance-of-pandas-series-vs-numpy-arrays/
             values = data[feature].to_numpy()
             labels = data[self.target].to_numpy()
 
@@ -130,7 +80,7 @@ class DecisionTreeClassifier:
                 left_score = (left_weight) * self.gini_impurity(left_labels)
                 right_score = (right_weight) * self.gini_impurity(right_labels)
 
-                Gini_score =  left_score + right_score
+                Gini_score = left_score + right_score
 
                 # We are trying to minimise the Gini impurity score
                 if Gini_score < best_score:
