@@ -96,9 +96,13 @@ class DecisionTreeClassifier:
 
         # For each feature in selected subset of all features
         for feature in sub_features:
-            sorted_data = data.sort_values(feature)
-            values = sorted_data[feature].values
-            labels = sorted_data[self.target].values
+            # faster sorting because it uses numpy instead of pandas
+            # But essentially the same as unique_values = sorted(data[feature].unique())
+            values = data[feature].to_numpy()
+            labels = data[self.target].to_numpy()
+
+            order = np.argsort(values, kind='mergesort')
+            values, labels = values[order], labels[order]
 
             unique_values = np.unique(values)
 
