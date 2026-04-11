@@ -2,10 +2,10 @@ from RandomForest import RandomForests
 import pandas as pd
 import time
 
+# The parameters required
 ratio = 0.75
-num_trees = 11
+num_trees = 13
 target = "Type 1"
-all_times = {}
 
 def import_csv(file_name="./database/All_Pokemon.csv"):
     return pd.read_csv(file_name)
@@ -28,11 +28,19 @@ def main():
     amount = 0
     for i in range(len(test_data)):
         pred = random_forests.predict(test_data.iloc[i])
+        # For any other type of prediction (A more generic response)
         if target != "Type 1":
             if pred == test_data.iloc[i][target]:
                 correct += 1
-        elif pred == test_data.iloc[i][target] or pred == test_data.iloc[i]["Type 2"]:
+            else:
+                print(f"Predicted {pred} for type instead of {test_data.iloc[i][target]}")
+            continue
+
+        # Type can be type 1 or 2
+        if pred == test_data.iloc[i][target] or pred == test_data.iloc[i]["Type 2"]:
             correct += 1
+        else:
+            print(f"Predicted {pred} for {test_data.iloc[i]['Name']} instead of {test_data.iloc[i][target]} or {test_data.iloc[i]['Type 2']}")
         amount += 1
 
     end_time = time.time()

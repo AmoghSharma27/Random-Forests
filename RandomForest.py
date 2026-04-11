@@ -28,7 +28,7 @@ class RandomForests:
         for i in range(self.num_trees):
             # Create a decision tree and train it on th bootstrapped training data
             sample = self.bootstrap(train_data)
-            curr_tree = DecisionTreeClassifier(sample, self.target)
+            curr_tree = DecisionTreeClassifier(data=sample, target=self.target)
             forest.append(curr_tree)
 
         return forest

@@ -4,7 +4,6 @@ import numpy as np
 
 class DecisionTreeClassifier:
     def __init__(self, data, threshold=0.0, target="Type 1", features=None):
-
         if features is None:
             features = data.select_dtypes(include="number").columns.tolist()
             if target in features:
@@ -51,7 +50,9 @@ class DecisionTreeClassifier:
             values = data[feature].to_numpy()
             labels = data[self.target].to_numpy()
 
-            order = np.argsort(values, kind='mergesort')
+            # argsort just returns the list of indices where the value should go to sort the array
+            # I am using it because it is faster than normal sort
+            order = np.argsort(values, kind='quicksort')
             values, labels = values[order], labels[order]
 
             unique_values = np.unique(values)
@@ -109,8 +110,7 @@ class DecisionTreeClassifier:
             return tree
 
         # m_try = sqrt(num_features) and m_try > 0
-        num_features = len(self.features)
-        m_try = max(1, int(num_features ** 0.5))
+        m_try = max(1, int(len(self.features) ** 0.5))
 
         feature, threshold = self.find_best_split(data, self.features, m_try)
 

@@ -7,15 +7,6 @@ class BinaryTree:
         self.left = None
         self.parent = None
 
-    def is_empty(self):
-        return self.data is None
-
-    def make_root(self, data):
-        if not self.is_empty():
-            print("Root already exists")
-        else:
-            self.data = data
-
     def set_data(self, data):
         self.data = data
 
@@ -69,24 +60,6 @@ class BinaryTree:
         else:
             tree.set_parent(self)
             self.set_right(tree)
-
-    def detach_left(self):
-        if self.is_empty():
-            return None
-        retLeft = self.get_left()
-        self.left = None
-        if retLeft is not None:
-            retLeft.set_parent(None)
-        return retLeft
-
-    def detach_right(self):
-        if self.is_empty():
-            return None
-        retRight = self.get_right()
-        self.right = None
-        if retRight is not None:
-            retRight.set_parent(None)
-        return retRight
 
     def root(self):
         if self.get_parent() is None:
