@@ -1,4 +1,4 @@
-Running the program:
+## Running the program:
     - Running the program requires the RuleMining.py to be in the same directory as "./database" which
         contains "All_Pokemon.csv"
     - You need the following Python files in the same directory:
@@ -13,7 +13,11 @@ Running the program:
         the global variables:
             - "num_tree" for the number of trees that the forest has.
             - "ratio" for the ratio of split between training data:test data
-References:
+
+## Representation of how each prediction works:
+![Prediction](RandomForest.drawio.svg)
+
+## References:
     [1]     https://towardsdatascience.com/under-the-hood-decision-tree-454f8581684e/
     [2]     https://www.w3schools.com/python/numpy/numpy_random.asp
     [3]     https://www.w3schools.com/python/pandas/pandas_dataframes.asp
